@@ -480,40 +480,49 @@
       section.hero { overflow: visible; }
       .hero-image { overflow: visible; }
 
-      @media (max-width: 991px) {
+      /* ── DESKTOP: 1000px and above — full desktop layout ── */
+      @media (min-width: 1000px) {
+        .hero-col-text  { flex: 0 0 50%; max-width: 50%; }
+        .hero-col-image { flex: 0 0 50%; max-width: 50%; margin-top: 0 !important; }
+        .hero { text-align: left; }
+        .hero-buttons { justify-content: flex-start; }
+        .hero::before, .hero::after { display: block; }
+        .hero-image { padding-bottom: 80px; }
+        .mobile-cards-stack { display: none !important; }
+        /* Restore floating cards */
+        .floating-card.card-1,
+        .floating-card.card-2,
+        .floating-card.card-3,
+        .floating-card.card-4 { display: block !important; }
+      }
+
+      /* ── TABLET + MOBILE: below 1000px ── */
+      @media (max-width: 999px) {
+        /* Stack hero columns */
+        .hero-col-text, .hero-col-image {
+          flex: 0 0 100%; max-width: 100%;
+        }
+        .hero-col-image { margin-top: 2rem; }
         .hero { text-align: center; }
         .hero-buttons { justify-content: center; }
         .hero::before, .hero::after { display: none; }
-      }
-
-      /* ── TABLET FLOATING CARD ADJUSTMENTS (md only: 768px–991px) ── */
-      @media (min-width: 768px) and (max-width: 991px) {
-        /* Scale down card-1 and card-3 on left */
-        .floating-card.card-1 { width: 180px !important; padding: 12px !important; font-size: 12px; left: -2% !important; }
-        .floating-card.card-1 img { width: 36px !important; height: 36px !important; }
-        .floating-card.card-1 h6 { font-size: 13px !important; }
-        /* Card 2: pull it in so it doesn't overflow viewport */
-        .floating-card.card-2 { width: 220px !important; right: -4% !important; padding: 10px !important; }
-        .floating-card.card-2 h6 { font-size: 13px !important; }
-        .floating-card.card-2 h3 { font-size: 20px !important; }
-        /* Card 3 */
-        .floating-card.card-3 { width: 180px !important; padding: 10px !important; left: -2% !important; }
-        .floating-card.card-3 h6 { font-size: 14px !important; }
-        /* Card 4 */
-        .floating-card.card-4 { width: 160px !important; padding: 10px !important; right: -2% !important; bottom: -4% !important; }
-        .floating-card.card-4 h4 { font-size: 22px !important; }
-        /* Give image column extra bottom space for card-4 overflow */
-        .hero-col-image { padding-bottom: 60px !important; }
-      }
-
-      @media (max-width: 768px) {
+        /* Hide desktop floating cards */
+        .floating-card.card-1,
+        .floating-card.card-2,
+        .floating-card.card-3,
+        .floating-card.card-4 { display: none !important; }
+        /* Show mobile card stack */
+        .mobile-cards-stack { display: block !important; }
+        /* hero-image: no bottom padding (no floating cards) */
+        .hero-image { padding-bottom: 0; }
         section { padding-top: 60px !important; padding-bottom: 60px !important; }
         .hero-buttons { flex-direction: column; align-items: center; }
         .hero-buttons a { width: 100%; max-width: 320px; }
       }
-      @media (max-width: 576px) {
+
+      /* ── MOBILE only: below 600px ── */
+      @media (max-width: 599px) {
         h2 { font-size: 28px !important; line-height: 1.3; }
-        /* Only make CTA buttons full-width, not icon/circle buttons */
         .hero-buttons .btn,
         .hero-buttons a,
         .cta-banner .btn { width: 100%; }
@@ -561,7 +570,7 @@
     <section class="hero py-5">
       <div class="container">
         <div class="row align-items-center">
-          <div class="col-lg-6 hero-col-text">
+          <div class="col-12 col-lg-6 hero-col-text">
             <div class="hero-badge d-inline-block py-2 px-3 rounded-pill fs-6 fw-bold mb-4" style="background: var(--brand-purple-light); color: var(--brand-purple)">
               AGENT-LED HIRING. EXPERT RESULTS.
             </div>
@@ -610,7 +619,7 @@
           </div>
 
           <!-- HERO IMAGE + CARDS COL -->
-          <div class="col-lg-6 hero-col-image mt-5 mt-lg-0">
+          <div class="col-12 col-lg-6 hero-col-image mt-5 mt-lg-0">
             <div class="hero-image position-relative">
 
               <!-- Hero image: visible on all screens -->
@@ -683,8 +692,8 @@
 
             </div><!-- END .hero-image (position-relative) -->
 
-            <!-- ── MOBILE CARD STACK (visible only below md, sits below image) ── -->
-            <div class="d-md-none mt-4">
+            <!-- ── MOBILE CARD STACK (visible only below 1000px, sits below image) ── -->
+            <div class="mobile-cards-stack mt-4">
                 <div class="row g-3">
 
                   <!-- Agent card - full width -->
@@ -1095,9 +1104,9 @@
                     <tr class="border-0">
                       <td class="fw-semibold bg-light rounded-start-4 py-3 px-4 border-0" style="width:30%;font-size:18px;">Commitment</td>
                       <td class="py-3 px-4 border-0">Pay as you go</td>
-                      <td class="py-3 px-4 border-0">Min. 1 month</td>
-                      <td class="py-3 px-4 border-0">Min. 1 month</td>
-                      <td class="py-3 px-4 border-0">Until completion</td>
+                      <td class="py-3 px-4 border-0">Minimum 1 month</td>
+                      <td class="py-3 px-4 border-0">Minimum 1 month</td>
+                      <td class="py-3 px-4 border-0">Until project completion</td>
                     </tr>
                     <tr class="border-0">
                       <td class="fw-semibold bg-light rounded-start-4 py-3 px-4 border-0" style="width:30%;font-size:18px;">Billing</td>
@@ -1160,7 +1169,7 @@
                         <td class="py-3 px-3 border-0 text-center" style="white-space:nowrap">Hourly</td>
                         <td class="py-3 px-3 border-0 text-center" style="white-space:nowrap">Monthly</td>
                         <td class="py-3 px-3 border-0 text-center" style="white-space:nowrap">Monthly</td>
-                        <td class="py-3 px-3 border-0 text-center" style="white-space:nowrap">Milestones based</td>
+                        <td class="py-3 px-3 border-0 text-center" style="white-space:nowrap">Milestone-based</td>
                       </tr>
                       <tr class="border-0" style="background:#fafafa">
                         <td class="fw-semibold bg-light py-3 px-3 border-0" style="font-size:12px;white-space:nowrap">Flexibility</td>
