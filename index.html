@@ -106,7 +106,9 @@
 
       .c4-line, .c4-dot { stroke: var(--brand-purple); transition: stroke 0.3s ease; }
       .card-4:hover .c4-line,
-      .card-4:hover .c4-dot { stroke: var(--brand-yellow); }
+      .card-4:hover .c4-dot { stroke: var(--brand-yellow) !important; }
+      .mobile-hero-card:hover .c4-line,
+      .mobile-hero-card:hover .c4-dot { stroke: var(--brand-yellow) !important; }
 
       .floating-card { transition: all 0.3s ease; }
       .floating-card:not(.choose-card):not(.comparison-card):hover {
