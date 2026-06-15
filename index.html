@@ -22,7 +22,6 @@
         pointer-events: none; z-index: 0; opacity: 0.45;
       }
 
-      /* ── STICKY HEADER WRAPPER ── */
       .sticky-header {
         position: sticky;
         top: 0;
@@ -31,9 +30,7 @@
 
       .hero {
         position: relative;
-        background: linear-gradient(135deg, #f8f7ff 0%, #ece9ff 40%, #f8f7ff 100%);
-        background-size: 300% 300%;
-        animation: heroGradientShift 8s ease infinite;
+        background: #f8f7fc;
       }
       @keyframes heroGradientShift {
         0%,100% { background-position: 0% 50%; }
@@ -219,6 +216,7 @@
       }
       .feature-box:hover .feature-icon i { color: #fff !important; }
 
+      /* ── INDUSTRY CARD: all original styles preserved ── */
       .industry-card {
         transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s;
         position: relative; overflow: hidden;
@@ -236,6 +234,112 @@
       .industry-card:hover .industry-icon { transform: scale(1.15) rotate(-6deg); background: var(--brand-yellow) !important; }
       .industry-card:hover .industry-icon i { color: #121212 !important; }
       .industry-icon { transition: transform 0.3s, background 0.3s; }
+
+      /* ── FLIP WRAPPER: sits around each col-lg div ── */
+      .ind-flip-outer {
+        perspective: 1000px;
+        height: 100%;
+      }
+      .ind-flip-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+        transform-style: preserve-3d;
+        transition: transform 0.65s cubic-bezier(.22,1,.36,1);
+      }
+      /* Flip is triggered by JS adding .is-flipped */
+      .ind-flip-inner.is-flipped {
+        transform: rotateY(180deg);
+      }
+      .ind-flip-front,
+      .ind-flip-back {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .ind-flip-front {
+        /* front face = original card, just sits normally */
+        background: transparent;
+      }
+      .ind-flip-back {
+        transform: rotateY(180deg);
+        background: #111;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-end;
+      }
+      .ind-flip-back img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.80;
+        border-radius: 16px;
+      }
+      .ind-flip-back-label {
+        position: relative;
+        z-index: 2;
+        padding: 12px 16px 16px;
+        background: linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.0) 100%);
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        text-align: center;
+        letter-spacing: 0.02em;
+      }
+      .ind-flip-back-label span {
+        display: block;
+        font-size: 11px;
+        font-weight: 400;
+        opacity: 0.82;
+        margin-top: 3px;
+      }
+
+      /* Progress ring shown on front face during 3s hover phase */
+      .ind-flip-timer {
+        position: absolute;
+        top: 8px; right: 8px;
+        width: 28px; height: 28px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .ind-flip-outer:hover .ind-flip-timer {
+        opacity: 1;
+      }
+      .ind-flip-inner.is-flipped ~ * .ind-flip-timer,
+      .ind-flip-inner.is-flipped .ind-flip-timer {
+        opacity: 0;
+      }
+      .ind-timer-ring {
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+      }
+      .ind-timer-track {
+        fill: none;
+        stroke: rgba(123,125,252,0.18);
+        stroke-width: 3;
+      }
+      .ind-timer-fill {
+        fill: none;
+        stroke: var(--brand-purple);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-dasharray: 69.1; /* 2π × 11 */
+        stroke-dashoffset: 69.1;
+        transition: none;
+      }
+      .ind-timer-fill.animating {
+        transition: stroke-dashoffset 3s linear;
+        stroke-dashoffset: 0;
+      }
 
       .process-card {
         transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s;
@@ -327,9 +431,7 @@
 
       .navbar-nav .nav-link { position: relative; transition: color 0.2s; }
       .navbar-collapse.show .nav-link::after,
-      .navbar-collapse.collapsing .nav-link::after {
-        display: none !important;
-      }
+      .navbar-collapse.collapsing .nav-link::after { display: none !important; }
       .navbar-nav .nav-link::after {
         content: ''; position: absolute; bottom: -2px; left: 50%;
         width: 0; height: 2px;
@@ -346,9 +448,7 @@
         text-align: left;
       }
       .navbar-collapse.show .navbar-nav .nav-item:last-child .nav-link,
-      .navbar-collapse.collapsing .navbar-nav .nav-item:last-child .nav-link {
-        border-bottom: none;
-      }
+      .navbar-collapse.collapsing .navbar-nav .nav-item:last-child .nav-link { border-bottom: none; }
 
       .btn-warning {
         background: var(--brand-yellow) !important;
@@ -406,17 +506,56 @@
       @keyframes popIn { 0%{opacity:0;transform:scale(0.6)} 75%{transform:scale(1.1)} 100%{opacity:1;transform:scale(1)} }
 
       .comparison-card { transition: transform 0.3s, box-shadow 0.3s, background 0.3s; }
-      .comparison-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(123,125,252,.25) !important;
-        background-color: #7b7dfc !important;
+      .comparison-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(123,125,252,.25) !important; }
+
+      .comparison-card .col-md-6 { background: #fff; transition: background 0.28s ease, color 0.28s ease; }
+      .comparison-card .col-md-6:first-child { color: var(--brand-purple); }
+      .comparison-card .col-md-6:last-child { color: #121212; }
+
+      .comparison-card:hover .col-md-6:first-child { background: var(--brand-purple); color: #fff; }
+      .comparison-card .col-md-6:first-child .rounded-circle { background: rgba(255,255,255,0.92); color: var(--brand-purple); }
+      .comparison-card .col-md-6:first-child .rounded-circle i,
+      .comparison-card .col-md-6:first-child i { color: var(--brand-purple) !important; }
+      .comparison-card:hover .col-md-6:first-child .rounded-circle { background: #fff; }
+      .comparison-card:hover .col-md-6:first-child p,
+      .comparison-card:hover .col-md-6:first-child h5,
+      .comparison-card:hover .col-md-6:first-child h6 { color: rgba(255,255,255,0.95); }
+      .comparison-card:hover .col-md-6:first-child p,
+      .comparison-card:hover .col-md-6:first-child h1,
+      .comparison-card:hover .col-md-6:first-child h2,
+      .comparison-card:hover .col-md-6:first-child h3,
+      .comparison-card:hover .col-md-6:first-child h4,
+      .comparison-card:hover .col-md-6:first-child h5,
+      .comparison-card:hover .col-md-6:first-child h6,
+      .comparison-card:hover .col-md-6:first-child small,
+      .comparison-card:hover .col-md-6:first-child strong,
+      .comparison-card:hover .col-md-6:first-child .text-muted,
+      .comparison-card:hover .col-md-6:first-child .fw-bold,
+      .comparison-card:hover .col-md-6:first-child .badge { color: #fff !important; }
+      .comparison-card:hover .col-md-6:last-child { background: var(--brand-yellow); color: #111; }
+      .comparison-card:hover .col-md-6:last-child .text-center { background: transparent !important; color: inherit !important; }
+      .comparison-card:hover .col-md-6:last-child p,
+      .comparison-card:hover .col-md-6:last-child h1,
+      .comparison-card:hover .col-md-6:last-child h2,
+      .comparison-card:hover .col-md-6:last-child h3,
+      .comparison-card:hover .col-md-6:last-child h4,
+      .comparison-card:hover .col-md-6:last-child h5,
+      .comparison-card:hover .col-md-6:last-child h6,
+      .comparison-card:hover .col-md-6:last-child small,
+      .comparison-card:hover .col-md-6:last-child strong,
+      .comparison-card:hover .col-md-6:last-child .fw-bold,
+      .comparison-card:hover .col-md-6:last-child .badge { color: #111 !important; }
+
+      .comparison-card .vs-badge {
+        background: var(--brand-purple); color: #fff; border: none;
+        box-shadow: 0 6px 18px rgba(91,93,224,0.18);
+        transition: background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
       }
-      .comparison-card:hover p,
-      .comparison-card:hover h5 { color: #fff !important; }
-      .comparison-card:hover .rounded-circle { background: rgba(255,255,255,0.2) !important; }
-      .comparison-card:hover i { color: #fff !important; }
-      .comparison-card:hover .col-md-6:first-child { border-color: rgba(255,255,255,0.2) !important; }
-      .comparison-card:hover .col-md-6 > div[style*="background"] { background: rgba(255,255,255,0.25) !important; }
+      .comparison-card:hover .vs-badge {
+        background: #fff !important; color: var(--brand-purple) !important;
+        border: 1px solid var(--brand-purple) !important;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+      }
 
       .logo-item { filter: grayscale(100%); opacity: 0.55; transition: filter 0.25s, opacity 0.25s, transform 0.25s; }
       .logo-item:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
@@ -427,38 +566,17 @@
       .arrow-btn { transition: transform 0.2s, box-shadow 0.2s; }
       .arrow-btn:hover { transform: scale(1.12); box-shadow: 0 4px 14px rgba(123,125,252,.25); }
 
-      .t-card {
-        transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s;
-        cursor: default;
-      }
-      .t-card:hover {
-        transform: translateY(-6px) scale(1.02);
-        box-shadow: 0 18px 40px rgba(91,93,224,.35) !important;
-      }
-      .t-avatar {
-        transition: transform 0.3s;
-        border: 2px solid var(--brand-purple-light);
-      }
-      .t-card:hover .t-avatar {
-        transform: scale(1.12);
-        border-color: var(--brand-purple);
-      }
+      .t-card { transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s; cursor: default; }
+      .t-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 18px 40px rgba(91,93,224,.35) !important; }
+      .t-avatar { transition: transform 0.3s; border: 2px solid var(--brand-purple-light); }
+      .t-card:hover .t-avatar { transform: scale(1.12); border-color: var(--brand-purple); }
 
       .t-dot {
-        width: 8px; height: 8px;
-        border-radius: 50%;
-        background: rgba(255,255,255,.35);
-        border: none;
-        padding: 0;
-        cursor: pointer;
+        width: 8px; height: 8px; border-radius: 50%;
+        background: rgba(255,255,255,.35); border: none; padding: 0; cursor: pointer;
         transition: background 0.3s, transform 0.3s, width 0.3s;
       }
-      .t-dot.active {
-        background: #fff;
-        width: 22px;
-        border-radius: 4px;
-        transform: none;
-      }
+      .t-dot.active { background: #fff; width: 22px; border-radius: 4px; transform: none; }
 
       .cta-banner { transition: box-shadow 0.3s; }
       .cta-banner:hover { box-shadow: 0 24px 60px rgba(123,125,252,.2); }
@@ -469,25 +587,14 @@
       .hire-table tbody tr { transition: background 0.2s; }
       .hire-table tbody tr:hover td { background: #f3efff !important; }
 
-      /* ── TAB BUTTONS ── */
       .tab-btn { transition: transform 0.18s, background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s; }
       .tab-btn:hover { transform: scale(1.04); }
-      /* Hourly, Monthly, Project-Based → yellow on hover */
       .tab-btn.btn-light:hover { background: var(--brand-yellow) !important; color: #121212 !important; box-shadow: 0 4px 14px rgba(255,205,0,.4); }
-      /* Compare → same light look at rest, purple on hover */
       .tab-btn.btn-primary { background: #f8f9fa !important; border-color: #f8f9fa !important; color: #121212 !important; box-shadow: none; }
       .tab-btn.btn-primary:hover { background: var(--brand-purple) !important; border-color: var(--brand-purple) !important; color: #fff !important; box-shadow: 0 4px 14px rgba(123,125,252,.4); }
 
-      .ticker-strip {
-        background: var(--brand-yellow);
-        overflow: hidden; white-space: nowrap;
-        padding: 10px 0;
-      }
-      .ticker-inner {
-        display: inline-block;
-        animation: ticker 25s linear infinite;
-        font-weight: 700; font-size: 13px; color: #121212;
-      }
+      .ticker-strip { background: var(--brand-yellow); overflow: hidden; white-space: nowrap; padding: 10px 0; }
+      .ticker-inner { display: inline-block; animation: ticker 25s linear infinite; font-weight: 700; font-size: 13px; color: #121212; }
       @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
       .comparison-card .col-md-6,
@@ -495,9 +602,8 @@
       .comparison-card p,
       .comparison-card h5,
       .comparison-card i,
-      .comparison-card .rounded-circle {
-        transition: color 0.3s, background 0.3s, border-color 0.3s;
-      }
+      .comparison-card .rounded-circle { transition: color 0.3s, background 0.3s, border-color 0.3s; }
+
       .choose-card { transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s; }
       .choose-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(123,125,252,.12) !important; }
       .choose-item { transition: background 0.25s; border-radius: 12px; padding: 4px 8px; margin: -4px -8px; }
@@ -560,103 +666,38 @@
       }
 
       footer {
-        --f-purple: #7b7dfc;
-        --f-yellow: #ffcd00;
-        --f-purple-dark: #5b5de0;
-        --f-purple-glow: rgba(123,125,252,.25);
-        --f-yellow-glow: rgba(255,205,0,.35);
-        --f-spring: cubic-bezier(.34,1.56,.64,1);
-        --f-ease: cubic-bezier(.22,1,.36,1);
+        --f-purple: #7b7dfc; --f-yellow: #ffcd00; --f-purple-dark: #5b5de0;
+        --f-purple-glow: rgba(123,125,252,.25); --f-yellow-glow: rgba(255,205,0,.35);
+        --f-spring: cubic-bezier(.34,1.56,.64,1); --f-ease: cubic-bezier(.22,1,.36,1);
         background: #fff !important;
       }
-
-      footer .logo-wrap {
-        display: inline-block;
-        transition: transform .35s var(--f-spring), filter .35s ease;
-      }
-      footer .logo-wrap:hover {
-        transform: scale(1.07) translateY(-2px);
-        filter: drop-shadow(0 6px 16px var(--f-purple-glow));
-      }
-
-      footer .soc-link {
-        transition: background .3s ease, border-color .3s ease, color .3s ease, transform .35s var(--f-spring), box-shadow .3s ease !important;
-        position: relative; overflow: hidden;
-      }
-      footer .soc-link::before {
-        content: '';
-        position: absolute; inset: 0;
-        background: var(--f-purple);
-        border-radius: 50%;
-        transform: scale(0);
-        transition: transform .35s var(--f-spring);
-        z-index: 0;
-      }
+      footer .logo-wrap { display: inline-block; transition: transform .35s var(--f-spring), filter .35s ease; }
+      footer .logo-wrap:hover { transform: scale(1.07) translateY(-2px); filter: drop-shadow(0 6px 16px var(--f-purple-glow)); }
+      footer .soc-link { transition: background .3s ease, border-color .3s ease, color .3s ease, transform .35s var(--f-spring), box-shadow .3s ease !important; position: relative; overflow: hidden; }
+      footer .soc-link::before { content: ''; position: absolute; inset: 0; background: var(--f-purple); border-radius: 50%; transform: scale(0); transition: transform .35s var(--f-spring); z-index: 0; }
       footer .soc-link:hover::before { transform: scale(1); }
       footer .soc-link i { position: relative; z-index: 1; transition: color .3s ease; }
-      footer .soc-link:hover {
-        border-color: var(--f-purple) !important;
-        color: #fff !important;
-        transform: translateY(-5px) scale(1.14) rotate(-6deg);
-        box-shadow: 0 10px 24px var(--f-purple-glow);
-      }
+      footer .soc-link:hover { border-color: var(--f-purple) !important; color: #fff !important; transform: translateY(-5px) scale(1.14) rotate(-6deg); box-shadow: 0 10px 24px var(--f-purple-glow); }
       footer .soc-link:hover i { color: #fff !important; }
-
-      footer .foot-heading {
-        display: inline-block; position: relative;
-        transition: color .25s ease; cursor: default;
-      }
-      footer .foot-heading::after {
-        content: '';
-        position: absolute; bottom: -5px; left: 0;
-        width: 0; height: 3px;
-        background: linear-gradient(90deg, var(--f-purple), var(--f-yellow));
-        border-radius: 2px;
-        transition: width .4s var(--f-ease);
-      }
+      footer .foot-heading { display: inline-block; position: relative; transition: color .25s ease; cursor: default; }
+      footer .foot-heading::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 3px; background: linear-gradient(90deg, var(--f-purple), var(--f-yellow)); border-radius: 2px; transition: width .4s var(--f-ease); }
       footer .foot-col:hover .foot-heading { color: var(--f-purple) !important; }
       footer .foot-col:hover .foot-heading::after { width: 100%; }
-
-      footer .foot-link {
-        display: inline-block; text-decoration: none; color: #6b7280;
-        padding-left: 0; transition: color .25s ease, padding-left .25s var(--f-ease);
-      }
+      footer .foot-link { display: inline-block; text-decoration: none; color: #6b7280; padding-left: 0; transition: color .25s ease, padding-left .25s var(--f-ease); }
       footer .foot-link:hover { color: var(--f-purple) !important; padding-left: 6px; }
-
-      footer .nl-wrap {
-        transition: border-color .3s ease, box-shadow .3s ease;
-        border: 1.5px solid #e5e7eb !important; border-radius: 12px;
-        overflow: hidden; display: flex;
-      }
-      footer .nl-wrap:focus-within {
-        border-color: var(--f-purple) !important;
-        box-shadow: 0 0 0 4px rgba(123,125,252,.14);
-      }
-      footer .nl-input {
-        flex: 1; padding: 14px 16px; border: none; outline: none;
-        font-size: .95rem; color: #111; background: transparent;
-      }
+      footer .nl-wrap { transition: border-color .3s ease, box-shadow .3s ease; border: 1.5px solid #e5e7eb !important; border-radius: 12px; overflow: hidden; display: flex; }
+      footer .nl-wrap:focus-within { border-color: var(--f-purple) !important; box-shadow: 0 0 0 4px rgba(123,125,252,.14); }
+      footer .nl-input { flex: 1; padding: 14px 16px; border: none; outline: none; font-size: .95rem; color: #111; background: transparent; }
       footer .nl-input::placeholder { color: #9ca3af; transition: color .2s; }
       footer .nl-input:focus::placeholder { color: #b4b4c8; }
-
-      footer .nl-btn {
-        background: var(--f-yellow) !important; border: none;
-        padding: 14px 20px; cursor: pointer;
-        transition: background .35s ease, transform .3s var(--f-spring), box-shadow .3s ease;
-        position: relative; overflow: hidden;
-      }
-      footer .nl-btn::before {
-        content: ''; position: absolute; inset: 0;
-        background: var(--f-purple); opacity: 0; transition: opacity .35s ease;
-      }
+      footer .nl-btn { background: var(--f-yellow) !important; border: none; padding: 14px 20px; cursor: pointer; transition: background .35s ease, transform .3s var(--f-spring), box-shadow .3s ease; position: relative; overflow: hidden; }
+      footer .nl-btn::before { content: ''; position: absolute; inset: 0; background: var(--f-purple); opacity: 0; transition: opacity .35s ease; }
       footer .nl-btn i { position: relative; z-index: 1; color: #fff; font-size: 16px; transition: transform .3s var(--f-spring); }
       footer .nl-btn:hover { transform: scale(1.08); box-shadow: 0 6px 18px var(--f-purple-glow); }
       footer .nl-btn:hover::before { opacity: 1; }
       footer .nl-btn:hover i { transform: translateX(3px); }
-
       footer .foot-bottom { transition: color .3s ease; cursor: default; }
       footer .foot-bottom:hover { color: var(--f-purple) !important; }
-
       .foot-anim { opacity: 0; transform: translateY(24px); }
       .foot-anim.foot-visible { animation: footFadeUp .7s cubic-bezier(.22,1,.36,1) both; }
       .foot-anim:nth-child(1).foot-visible { animation-delay: .05s; }
@@ -665,13 +706,7 @@
       .foot-anim:nth-child(4).foot-visible { animation-delay: .32s; }
       .foot-anim:nth-child(5).foot-visible { animation-delay: .41s; }
       @keyframes footFadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
-
-      .foot-divider {
-        border: none; height: 1px;
-        background: linear-gradient(90deg, transparent, #e5e7eb 20%, #e5e7eb 80%, transparent);
-        margin: 32px 0 20px;
-      }
-
+      .foot-divider { border: none; height: 1px; background: linear-gradient(90deg, transparent, #e5e7eb 20%, #e5e7eb 80%, transparent); margin: 32px 0 20px; }
       @keyframes logoShimmer {
         0%   { filter: drop-shadow(0 0 0 transparent); }
         50%  { filter: drop-shadow(0 0 10px rgba(255,205,0,.6)) drop-shadow(0 0 22px rgba(123,125,252,.35)); }
@@ -683,42 +718,6 @@
   <body>
 
     <canvas id="particle-canvas"></canvas>
-
-    <!-- ── STICKY HEADER: ticker + navbar stay pinned together 
-    <div class="sticky-header">
-       TICKER STRIP 
-      <div class="ticker-strip">
-        <span class="ticker-inner">
-          ✦ Pre-vetted Top 3% Talent &nbsp;&nbsp;&nbsp; ✦ 24-48 Hour Talent Match &nbsp;&nbsp;&nbsp; ✦ No Upfront Hiring Cost &nbsp;&nbsp;&nbsp; ✦ 98% Client Satisfaction &nbsp;&nbsp;&nbsp; ✦ 1M+ Vetted Professionals &nbsp;&nbsp;&nbsp; ✦ Agent-Led Hiring. Expert Results. &nbsp;&nbsp;&nbsp; ✦ Pre-vetted Top 3% Talent &nbsp;&nbsp;&nbsp; ✦ 24-48 Hour Talent Match &nbsp;&nbsp;&nbsp; ✦ No Upfront Hiring Cost &nbsp;&nbsp;&nbsp; ✦ 98% Client Satisfaction &nbsp;&nbsp;&nbsp; ✦ 1M+ Vetted Professionals &nbsp;&nbsp;&nbsp; ✦ Agent-Led Hiring. Expert Results. &nbsp;&nbsp;&nbsp;
-        </span>
-      </div>
-
-      < NAVBAR 
-      <nav class="navbar navbar-expand-lg py-4">
-        <div class="container">
-          <a class="navbar-brand fs-2 fw-extrabold" href="https://flex-work.in/" style="color: var(--brand-purple)">
-            <img src="logo.png" alt="FlexWork Logo" style="height:44px; filter: drop-shadow(0 0 2px rgba(123,125,252,.4));">
-          </a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav mx-auto">
-              <li class="nav-item"><a class="nav-link fw-semibold text-body mx-2" href="#">Our Services</a></li>
-              <li class="nav-item"><a class="nav-link fw-semibold text-body mx-2" href="#">Who We Are</a></li>
-              <li class="nav-item"><a class="nav-link fw-semibold text-body mx-2" href="#">How We Work</a></li>
-              <li class="nav-item"><a class="nav-link fw-semibold text-body mx-2" href="#">Resources</a></li>
-              <li class="nav-item"><a class="nav-link fw-semibold text-body mx-2" href="#">Pricing</a></li>
-            </ul>
-            <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
-              <a href="#" class="login-btn fw-semibold text-decoration-none px-4 py-2 rounded-3">Log In</a>
-              <a href="#" class="btn btn-warning rounded-3 px-4 py-2 fw-semibold">Post a Job →</a>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
-     END STICKY HEADER -->
 
     <!-- HERO -->
     <section class="hero py-5">
@@ -791,7 +790,7 @@
                 <p class="small text-muted mt-4 mb-0 lh-base">I'll find the right experts so you can focus on what matters.</p>
                 <button class="btn rounded-circle d-flex align-items-center justify-content-center ms-auto" style="width:42px;height:42px;background:var(--brand-purple);border:none;">💬</button>
               </div>
-              <div class="floating-card card-2 position-absolute bg-white p-3 rounded-4 shadow" style="top:30%;right:-10%;width:310px">
+              <div class="floating-card card-2 industry-card position-absolute bg-white p-3 rounded-4 shadow" style="top:30%;right:-10%;width:310px">
                 <small class="text-secondary fw-semibold d-block mb-3">Active Requirement</small>
                 <h6 class="fw-bold mt-2 text-nowrap">Senior DevOps Engineer</h6>
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -803,7 +802,7 @@
                   <div class="col"><small class="text-secondary d-block text-nowrap text-end">Interviews Scheduled</small><h3 class="fw-bold mb-0">4</h3></div>
                 </div>
               </div>
-              <div class="floating-card card-3 position-absolute bg-white rounded-4 shadow-sm p-3" style="bottom:15%;left:0%;width:240px">
+              <div class="floating-card card-3 industry-card position-absolute bg-white rounded-4 shadow-sm p-3" style="bottom:15%;left:0%;width:240px">
                 <div class="d-flex justify-content-between align-items-center">
                   <small class="text-muted fw-semibold">Top Match</small>
                   <span class="badge rounded-pill px-3 py-2" style="background:#e8fff1;color:#22c55e;font-size:11px;font-weight:700">96% Match</span>
@@ -819,7 +818,7 @@
                   <span class="ms-2 fw-bold" style="color:#4f46e5;font-size:13px">+9</span>
                 </div>
               </div>
-              <div class="floating-card card-4 position-absolute bg-white rounded-4 shadow-sm p-3" style="bottom:0;right:0;width:220px">
+              <div class="floating-card card-4 industry-card position-absolute bg-white rounded-4 shadow-sm p-3" style="bottom:0;right:0;width:220px">
                 <small class="fw-semibold" style="color:#8b8ba3;font-size:12px">Time To Hire</small>
                 <h4 class="fw-bold mt-2 mb-3" style="color:#1e1b4b;font-size:34px;line-height:1">24-48 hrs</h4>
                 <svg width="100%" height="55" viewBox="0 0 200 55" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -941,55 +940,185 @@
           <h2 style="font-size:32px;font-weight:700;color:#171717">Industries We Serve</h2>
         </div>
         <div class="row g-4 justify-content-center stagger-children">
+
+          <!-- Card 1: SaaS & Technology -->
           <div class="col-lg col-md-3 col-sm-6">
-            <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card">
-              <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-display fs-3" style="color:var(--brand-purple)"></i></div>
-              <h5 class="fs-6 fw-bold text-dark mb-2">SaaS & Technology</h5>
-              <p class="small lh-base text-secondary m-0">Building the future with powerful tech</p>
+            <div class="ind-flip-outer">
+              <div class="ind-flip-inner" data-img="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80" data-label="SaaS & Technology" data-sub="Building the future with powerful tech">
+                <!-- FRONT: original card preserved 100% -->
+                <div class="ind-flip-front">
+                  <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card" style="min-height:200px">
+                    <!-- timer ring overlaid on front -->
+                    <div class="ind-flip-timer">
+                      <svg width="28" height="28" viewBox="0 0 28 28">
+                        <circle class="ind-timer-track" cx="14" cy="14" r="11"/>
+                        <circle class="ind-timer-ring ind-timer-fill" cx="14" cy="14" r="11"/>
+                      </svg>
+                    </div>
+                    <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-display fs-3" style="color:var(--brand-purple)"></i></div>
+                    <h5 class="fs-6 fw-bold text-dark mb-2">SaaS & Technology</h5>
+                    <p class="small lh-base text-secondary m-0">Building the future with powerful tech</p>
+                  </div>
+                </div>
+                <!-- BACK: image -->
+                <div class="ind-flip-back">
+                  <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80" alt="SaaS & Technology"/>
+                  <div class="ind-flip-back-label">SaaS & Technology<span>Building the future with powerful tech</span></div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Card 2: Fintech -->
           <div class="col-lg col-md-3 col-sm-6">
-            <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card">
-              <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-shield-lock fs-3" style="color:var(--brand-purple)"></i></div>
-              <h5 class="fs-6 fw-bold text-dark mb-2">Fintech</h5>
-              <p class="small lh-base text-secondary m-0">Secure, smart & scalable financial solutions</p>
+            <div class="ind-flip-outer">
+              <div class="ind-flip-inner" data-img="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80" data-label="Fintech" data-sub="Secure, smart & scalable financial solutions">
+                <div class="ind-flip-front">
+                  <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card" style="min-height:200px">
+                    <div class="ind-flip-timer">
+                      <svg width="28" height="28" viewBox="0 0 28 28">
+                        <circle class="ind-timer-track" cx="14" cy="14" r="11"/>
+                        <circle class="ind-timer-ring ind-timer-fill" cx="14" cy="14" r="11"/>
+                      </svg>
+                    </div>
+                    <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-shield-lock fs-3" style="color:var(--brand-purple)"></i></div>
+                    <h5 class="fs-6 fw-bold text-dark mb-2">Fintech</h5>
+                    <p class="small lh-base text-secondary m-0">Secure, smart &amp; scalable financial solutions</p>
+                  </div>
+                </div>
+                <div class="ind-flip-back">
+                  <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80" alt="Fintech"/>
+                  <div class="ind-flip-back-label">Fintech<span>Secure, smart &amp; scalable financial solutions</span></div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Card 3: Healthcare -->
           <div class="col-lg col-md-3 col-sm-6">
-            <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card">
-              <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-heart-pulse fs-3" style="color:var(--brand-purple)"></i></div>
-              <h5 class="fs-6 fw-bold text-dark mb-2">Healthcare</h5>
-              <p class="small lh-base text-secondary m-0">Better healthcare through innovation</p>
+            <div class="ind-flip-outer">
+              <div class="ind-flip-inner" data-img="https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&q=80" data-label="Healthcare" data-sub="Better healthcare through innovation">
+                <div class="ind-flip-front">
+                  <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card" style="min-height:200px">
+                    <div class="ind-flip-timer">
+                      <svg width="28" height="28" viewBox="0 0 28 28">
+                        <circle class="ind-timer-track" cx="14" cy="14" r="11"/>
+                        <circle class="ind-timer-ring ind-timer-fill" cx="14" cy="14" r="11"/>
+                      </svg>
+                    </div>
+                    <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-heart-pulse fs-3" style="color:var(--brand-purple)"></i></div>
+                    <h5 class="fs-6 fw-bold text-dark mb-2">Healthcare</h5>
+                    <p class="small lh-base text-secondary m-0">Better healthcare through innovation</p>
+                  </div>
+                </div>
+                <div class="ind-flip-back">
+                  <img src="https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&q=80" alt="Healthcare"/>
+                  <div class="ind-flip-back-label">Healthcare<span>Better healthcare through innovation</span></div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Card 4: E-commerce -->
           <div class="col-lg col-md-3 col-sm-6">
-            <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card">
-              <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-cart3 fs-3" style="color:var(--brand-purple)"></i></div>
-              <h5 class="fs-6 fw-bold text-dark mb-2">E-commerce</h5>
-              <p class="small lh-base text-secondary m-0">Powering seamless digital experiences</p>
+            <div class="ind-flip-outer">
+              <div class="ind-flip-inner" data-img="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80" data-label="E-commerce" data-sub="Powering seamless digital experiences">
+                <div class="ind-flip-front">
+                  <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card" style="min-height:200px">
+                    <div class="ind-flip-timer">
+                      <svg width="28" height="28" viewBox="0 0 28 28">
+                        <circle class="ind-timer-track" cx="14" cy="14" r="11"/>
+                        <circle class="ind-timer-ring ind-timer-fill" cx="14" cy="14" r="11"/>
+                      </svg>
+                    </div>
+                    <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-cart3 fs-3" style="color:var(--brand-purple)"></i></div>
+                    <h5 class="fs-6 fw-bold text-dark mb-2">E-commerce</h5>
+                    <p class="small lh-base text-secondary m-0">Powering seamless digital experiences</p>
+                  </div>
+                </div>
+                <div class="ind-flip-back">
+                  <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80" alt="E-commerce"/>
+                  <div class="ind-flip-back-label">E-commerce<span>Powering seamless digital experiences</span></div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Card 5: EdTech -->
           <div class="col-lg col-md-3 col-sm-6">
-            <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card">
-              <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-book fs-3" style="color:var(--brand-purple)"></i></div>
-              <h5 class="fs-6 fw-bold text-dark mb-2">EdTech</h5>
-              <p class="small lh-base text-secondary m-0">Enabling learning for a better tomorrow</p>
+            <div class="ind-flip-outer">
+              <div class="ind-flip-inner" data-img="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&q=80" data-label="EdTech" data-sub="Enabling learning for a better tomorrow">
+                <div class="ind-flip-front">
+                  <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card" style="min-height:200px">
+                    <div class="ind-flip-timer">
+                      <svg width="28" height="28" viewBox="0 0 28 28">
+                        <circle class="ind-timer-track" cx="14" cy="14" r="11"/>
+                        <circle class="ind-timer-ring ind-timer-fill" cx="14" cy="14" r="11"/>
+                      </svg>
+                    </div>
+                    <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-book fs-3" style="color:var(--brand-purple)"></i></div>
+                    <h5 class="fs-6 fw-bold text-dark mb-2">EdTech</h5>
+                    <p class="small lh-base text-secondary m-0">Enabling learning for a better tomorrow</p>
+                  </div>
+                </div>
+                <div class="ind-flip-back">
+                  <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&q=80" alt="EdTech"/>
+                  <div class="ind-flip-back-label">EdTech<span>Enabling learning for a better tomorrow</span></div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Card 6: Media & Entertainment -->
           <div class="col-lg col-md-3 col-sm-6">
-            <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card">
-              <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-camera-video fs-3" style="color:var(--brand-purple)"></i></div>
-              <h5 class="fs-6 fw-bold text-dark mb-2">Media & Entertainment</h5>
-              <p class="small lh-base text-secondary m-0">Creating impact at scale</p>
+            <div class="ind-flip-outer">
+              <div class="ind-flip-inner" data-img="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600&q=80" data-label="Media &amp; Entertainment" data-sub="Creating impact at scale">
+                <div class="ind-flip-front">
+                  <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card" style="min-height:200px">
+                    <div class="ind-flip-timer">
+                      <svg width="28" height="28" viewBox="0 0 28 28">
+                        <circle class="ind-timer-track" cx="14" cy="14" r="11"/>
+                        <circle class="ind-timer-ring ind-timer-fill" cx="14" cy="14" r="11"/>
+                      </svg>
+                    </div>
+                    <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-camera-video fs-3" style="color:var(--brand-purple)"></i></div>
+                    <h5 class="fs-6 fw-bold text-dark mb-2">Media &amp; Entertainment</h5>
+                    <p class="small lh-base text-secondary m-0">Creating impact at scale</p>
+                  </div>
+                </div>
+                <div class="ind-flip-back">
+                  <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600&q=80" alt="Media & Entertainment"/>
+                  <div class="ind-flip-back-label">Media &amp; Entertainment<span>Creating impact at scale</span></div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Card 7: Logistics -->
           <div class="col-lg col-md-3 col-sm-6">
-            <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card">
-              <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-truck fs-3" style="color:var(--brand-purple)"></i></div>
-              <h5 class="fs-6 fw-bold text-dark mb-2">Logistics</h5>
-              <p class="small lh-base text-secondary m-0">Optimizing operations and delivery</p>
+            <div class="ind-flip-outer">
+              <div class="ind-flip-inner" data-img="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=80" data-label="Logistics" data-sub="Optimizing operations and delivery">
+                <div class="ind-flip-front">
+                  <div class="bg-white py-4 px-3 text-center h-100 border border-light-subtle shadow-sm rounded-4 industry-card floating-card" style="min-height:200px">
+                    <div class="ind-flip-timer">
+                      <svg width="28" height="28" viewBox="0 0 28 28">
+                        <circle class="ind-timer-track" cx="14" cy="14" r="11"/>
+                        <circle class="ind-timer-ring ind-timer-fill" cx="14" cy="14" r="11"/>
+                      </svg>
+                    </div>
+                    <div class="industry-icon d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:62px;height:62px;background:#f3efff"><i class="bi bi-truck fs-3" style="color:var(--brand-purple)"></i></div>
+                    <h5 class="fs-6 fw-bold text-dark mb-2">Logistics</h5>
+                    <p class="small lh-base text-secondary m-0">Optimizing operations and delivery</p>
+                  </div>
+                </div>
+                <div class="ind-flip-back">
+                  <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=80" alt="Logistics"/>
+                  <div class="ind-flip-back-label">Logistics<span>Optimizing operations and delivery</span></div>
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -1012,7 +1141,7 @@
           <div class="col-lg">
             <div class="process-card text-center bg-white rounded-5 p-4 h-100">
               <div class="process-icon mx-auto d-flex align-items-center justify-content-center rounded-4 fs-3 mb-3" style="width:70px;height:70px;background:#edeaff"><i class="bi bi-search" style="color:var(--brand-purple)"></i></div>
-              <h6 class="fw-bold">Analyze & Align</h6>
+              <h6 class="fw-bold">Analyze &amp; Align</h6>
               <p class="small text-muted">Our AI + expert agents define the best fit.</p>
             </div>
           </div>
@@ -1026,14 +1155,14 @@
           <div class="col-lg">
             <div class="process-card text-center bg-white rounded-5 p-4 h-100">
               <div class="process-icon mx-auto d-flex align-items-center justify-content-center rounded-4 fs-3 mb-3" style="width:70px;height:70px;background:#edeaff"><i class="bi bi-chat-dots" style="color:var(--brand-purple)"></i></div>
-              <h6 class="fw-bold">Interview & Evaluate</h6>
+              <h6 class="fw-bold">Interview &amp; Evaluate</h6>
               <p class="small text-muted">Meet shortlisted candidates with coordination.</p>
             </div>
           </div>
           <div class="col-lg">
             <div class="process-card text-center bg-white rounded-5 p-4 h-100">
               <div class="process-icon mx-auto d-flex align-items-center justify-content-center rounded-4 fs-3 mb-3" style="width:70px;height:70px;background:#edeaff"><i class="bi bi-rocket" style="color:var(--brand-purple)"></i></div>
-              <h6 class="fw-bold">Start & Succeed</h6>
+              <h6 class="fw-bold">Start &amp; Succeed</h6>
               <p class="small text-muted">Onboard and stay supported until success.</p>
             </div>
           </div>
@@ -1054,7 +1183,7 @@
               </div>
               <div class="d-flex align-items-start mb-4 choose-item">
                 <div class="choose-item-icon d-flex align-items-center justify-content-center rounded-circle me-3" style="min-width:34px;width:34px;height:34px;background:#f3efff"><i class="bi bi-patch-check" style="color:var(--brand-purple);font-size:15px"></i></div>
-                <div><h6 class="fw-bold mb-1" style="color:#1f1f3d;font-size:18px">Pre-vetted & Verified Experts</h6><p class="mb-0" style="color:#8a8aa0;font-size:15px;line-height:1.6">Every professional is verified for skills, experience, and background.</p></div>
+                <div><h6 class="fw-bold mb-1" style="color:#1f1f3d;font-size:18px">Pre-vetted &amp; Verified Experts</h6><p class="mb-0" style="color:#8a8aa0;font-size:15px;line-height:1.6">Every professional is verified for skills, experience, and background.</p></div>
               </div>
               <div class="d-flex align-items-start mb-4 choose-item">
                 <div class="choose-item-icon d-flex align-items-center justify-content-center rounded-circle me-3" style="min-width:34px;width:34px;height:34px;background:#f3efff"><i class="bi bi-globe-americas" style="color:var(--brand-purple);font-size:15px"></i></div>
@@ -1080,17 +1209,17 @@
                   <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#f4f1ff"><i class="bi bi-x-lg" style="color:var(--brand-purple);font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Manual screening</p></div>
                   <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#f4f1ff"><i class="bi bi-x-lg" style="color:var(--brand-purple);font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Slow hirings (weeks)</p></div>
                   <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#f4f1ff"><i class="bi bi-x-lg" style="color:var(--brand-purple);font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Uncertain quality</p></div>
-                  <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#f4f1ff"><i class="bi bi-x-lg" style="color:var(--brand-purple);font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">High effort & cost</p></div>
+                  <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#f4f1ff"><i class="bi bi-x-lg" style="color:var(--brand-purple);font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">High effort &amp; cost</p></div>
                   <div class="d-flex align-items-start"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#f4f1ff"><i class="bi bi-x-lg" style="color:var(--brand-purple);font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Upfront fees</p></div>
                 </div>
-                <div class="position-absolute top-50 start-50 translate-middle d-none d-md-flex align-items-center justify-content-center rounded-circle" style="width:54px;height:54px;background:var(--brand-purple);color:#fff;font-weight:700;font-size:14px;z-index:2;box-shadow:0 4px 12px rgba(123,125,252,.4)">VS</div>
+                <div class="position-absolute top-50 start-50 translate-middle d-none d-md-flex align-items-center justify-content-center rounded-circle vs-badge" style="width:54px;height:54px;background:var(--brand-purple);color:#fff;font-weight:700;font-size:14px;z-index:2;box-shadow:0 4px 12px rgba(123,125,252,.4)">VS</div>
                 <div class="col-md-6">
                   <div class="text-center py-4" style="background:var(--brand-purple);color:#fff"><h5 class="fw-bold mb-0" style="font-size:22px">FlexWork Agent Model</h5></div>
                   <div class="p-4 p-lg-5">
                     <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#e8f8ee"><i class="bi bi-check-lg" style="color:#1fa971;font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Agent does the work for you</p></div>
-                    <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#e8f8ee"><i class="bi bi-check-lg" style="color:#1fa971;font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Curated & relevant matches only</p></div>
+                    <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#e8f8ee"><i class="bi bi-check-lg" style="color:#1fa971;font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Curated &amp; relevant matches only</p></div>
                     <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#e8f8ee"><i class="bi bi-check-lg" style="color:#1fa971;font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Matches in 24–48 hours</p></div>
-                    <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#e8f8ee"><i class="bi bi-check-lg" style="color:#1fa971;font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Pre-vetted & proven experts</p></div>
+                    <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#e8f8ee"><i class="bi bi-check-lg" style="color:#1fa971;font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Pre-vetted &amp; proven experts</p></div>
                     <div class="d-flex align-items-start mb-4"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#e8f8ee"><i class="bi bi-check-lg" style="color:#1fa971;font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Zero upfront cost</p></div>
                     <div class="d-flex align-items-start"><div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="min-width:28px;width:28px;height:28px;background:#e8f8ee"><i class="bi bi-check-lg" style="color:#1fa971;font-size:14px"></i></div><p class="mb-0" style="color:#5d5d73;font-size:16px;line-height:1.6">Pay only when you hire</p></div>
                   </div>
@@ -1255,69 +1384,18 @@
       </div>
     </section>
 
-    <!-- FOOTER 
-    <footer style="background:#fff;border-top:1px solid #f0f0f8;padding:48px 80px 32px;">
-      <div class="row g-4 mb-4">
-        <div class="col-lg-3 col-md-6 foot-anim">
-          <a href="https://flex-work.in/" class="logo-wrap" style="margin-bottom:8px;display:inline-block;"><img src="logo.png" alt="FlexWork" style="height:50px;width:auto;"></a>
-          <div class="d-flex gap-2 mt-3">
-            <a href="https://www.linkedin.com/company/flexwork.in" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="soc-link" style="width:42px;height:42px;border:1px solid #e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6b7280;text-decoration:none;"><i class="bi bi-linkedin" style="font-size:18px;"></i></a>
-            <a href="https://x.com/flexwork_in" target="_blank" rel="noopener noreferrer" aria-label="Twitter" class="soc-link" style="width:42px;height:42px;border:1px solid #e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6b7280;text-decoration:none;"><i class="bi bi-twitter-x" style="font-size:18px;"></i></a>
-            <a href="https://www.facebook.com/flexwork.in" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="soc-link" style="width:42px;height:42px;border:1px solid #e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6b7280;text-decoration:none;"><i class="bi bi-facebook" style="font-size:18px;"></i></a>
-            <a href="https://www.instagram.com/flexwork_in/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="soc-link" style="width:42px;height:42px;border:1px solid #e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6b7280;text-decoration:none;"><i class="bi bi-instagram" style="font-size:18px;"></i></a>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-6 col-6 foot-col foot-anim" style="transition-delay:.1s;">
-          <h4 class="foot-heading" style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:22px;color:#111;">Company</h4>
-          <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:14px;margin:0;">
-            <li><a href="#" class="foot-link">About Us</a></li>
-            <li><a href="#" class="foot-link">Careers</a></li>
-            <li><a href="#" class="foot-link">Blog</a></li>
-            <li><a href="#" class="foot-link">Contact Us</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-2 col-md-6 col-6 foot-col foot-anim" style="transition-delay:.2s;">
-          <h4 class="foot-heading" style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:22px;color:#111;">Resources</h4>
-          <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:14px;margin:0;">
-            <li><a href="#" class="foot-link">Help Center</a></li>
-            <li><a href="#" class="foot-link">Guides</a></li>
-            <li><a href="#" class="foot-link">Webinars</a></li>
-            <li><a href="#" class="foot-link">Success Stories</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-2 col-md-6 col-6 foot-col foot-anim" style="transition-delay:.3s;">
-          <h4 class="foot-heading" style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:22px;color:#111;">Legal</h4>
-          <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:14px;margin:0;">
-            <li><a href="#" class="foot-link">Terms of Service</a></li>
-            <li><a href="#" class="foot-link">Privacy Policy</a></li>
-            <li><a href="#" class="foot-link">Cookie Policy</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-3 col-md-6 foot-col foot-anim" style="transition-delay:.4s;">
-          <h4 class="foot-heading" style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:22px;color:#111;">Subscribe to our newsletter</h4>
-          <div class="nl-wrap" style="margin-top:4px;">
-            <input type="email" class="nl-input" placeholder="Enter your email">
-            <button class="nl-btn" aria-label="Subscribe"><i class="bi bi-arrow-right"></i></button>
-          </div>
-          <p style="font-size:12px;color:#9ca3af;margin-top:10px;margin-bottom:0;">No spam. Unsubscribe anytime.</p>
-        </div>
-      </div>
-      <hr class="foot-divider">
-      <div class="foot-bottom foot-anim" style="font-size:.95rem;color:#9ca3af;text-align:center;transition-delay:.5s;">© 2024 FlexWork. All rights reserved.</div>
-    </footer>-->
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
       window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
+      /* ── TESTIMONIAL CAROUSEL ── */
       (function () {
         const track  = document.getElementById('tTrack');
         const dotsEl = document.getElementById('tDots');
         const cards  = Array.from(track.querySelectorAll('.t-card'));
         const total  = cards.length;
         let current  = 0, autoTimer;
-
         cards.forEach((_, i) => {
           const d = document.createElement('button');
           d.className = 't-dot' + (i === 0 ? ' active' : '');
@@ -1325,29 +1403,30 @@
           d.addEventListener('click', () => goTo(i));
           dotsEl.appendChild(d);
         });
-
         function goTo(idx) {
           current = (idx + total) % total;
           track.style.transform = 'translateX(-' + (current * 100) + '%)';
           dotsEl.querySelectorAll('.t-dot').forEach((d, i) => d.classList.toggle('active', i === current));
         }
-
         document.getElementById('tPrev').addEventListener('click', () => { goTo(current - 1); resetAuto(); });
         document.getElementById('tNext').addEventListener('click', () => { goTo(current + 1); resetAuto(); });
-
         function resetAuto() { clearInterval(autoTimer); autoTimer = setInterval(() => goTo(current + 1), 5000); }
         resetAuto();
       })();
 
+      /* ── NAV SCROLL ── */
       window.addEventListener('scroll', () => {
-        document.querySelector('nav').classList.toggle('scrolled', window.scrollY > 40);
+        const nav = document.querySelector('nav');
+        if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
       });
 
+      /* ── REVEAL / STAGGER OBSERVERS ── */
       const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
       }, { threshold: 0.3, rootMargin: '0px 0px -60px 0px' });
       document.querySelectorAll('.reveal, .stagger-children').forEach(el => revealObserver.observe(el));
 
+      /* ── FOOTER ANIM ── */
       (function() {
         var els = document.querySelectorAll('.foot-anim');
         if (!els.length) return;
@@ -1357,6 +1436,63 @@
         els.forEach(function(el) { io.observe(el); });
       })();
 
+      /* ── INDUSTRY CARD FLIP: hover → 1s effects → flip; mouseleave → instant reset ── */
+      (function () {
+        const DELAY = 1000; // ms before flip triggers
+        const CIRCUMFERENCE = 2 * Math.PI * 11; // r=11 → ~69.1
+
+        document.querySelectorAll('.ind-flip-outer').forEach(function (outer) {
+          const inner = outer.querySelector('.ind-flip-inner');
+          const ring  = outer.querySelector('.ind-timer-fill');
+          let flipTimer = null;
+          let animFrame = null;
+
+          function startHover() {
+            // Reset ring then start animation
+            ring.style.transition = 'none';
+            ring.style.strokeDashoffset = CIRCUMFERENCE;
+
+            // Force reflow so the reset registers before we animate
+            void ring.getBoundingClientRect();
+
+            ring.style.transition = 'stroke-dashoffset ' + (DELAY / 1000) + 's linear';
+            ring.style.strokeDashoffset = '0';
+
+            // Schedule the flip
+            flipTimer = setTimeout(function () {
+              inner.classList.add('is-flipped');
+            }, DELAY);
+          }
+
+          function cancelHover() {
+            // Cancel pending flip
+            clearTimeout(flipTimer);
+            flipTimer = null;
+
+            // Stop ring animation instantly
+            ring.style.transition = 'none';
+            ring.style.strokeDashoffset = CIRCUMFERENCE;
+
+            // Unflip
+            inner.classList.remove('is-flipped');
+          }
+
+          outer.addEventListener('mouseenter', startHover);
+          outer.addEventListener('mouseleave', cancelHover);
+
+          // Touch support: tap once to start countdown, tap again to reset
+          outer.addEventListener('touchstart', function (e) {
+            e.preventDefault();
+            if (inner.classList.contains('is-flipped')) {
+              cancelHover();
+            } else if (!flipTimer) {
+              startHover();
+            }
+          }, { passive: false });
+        });
+      })();
+
+      /* ── PARTICLE CANVAS ── */
       const canvas = document.getElementById('particle-canvas');
       const ctx = canvas.getContext('2d');
       let W, H, particles = [];
